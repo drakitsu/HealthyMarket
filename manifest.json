@@ -1,0 +1,24 @@
+{
+  "manifest_version": 2,
+ 
+  "name": "Modify CSS and HTML",
+  "version": "0.1.0",
+  "description": "Lateral blog post demo extension",
+   "permissions": [
+          "tabs",
+          "*://*/*"
+        ],
+        
+   "background": {
+    "scripts":["background.js"],
+    "persistent": false
+ 
+  },
+ 
+  "content_scripts": [{
+    "_commentaire" : "'css': ['styles.css']",
+    "js": ["hello.js"],
+    "matches": ["http://*/*","https://*/*"]
+  }]
+ 
+}
