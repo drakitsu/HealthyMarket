@@ -1,12 +1,12 @@
 {
   "manifest_version": 2,
  
-  "name": "Modify CSS and HTML",
+  "name": "",
   "version": "0.1.0",
   "description": "Lateral blog post demo extension",
    "permissions": [
           "tabs",
-          "*://*/*"
+          "*://www.carrefour.fr/*"
         ],
         
    "background": {
@@ -19,6 +19,9 @@
     "_commentaire" : "'css': ['styles.css']",
     "js": ["hello.js"],
     "matches": ["http://*/*","https://*/*"]
-  }]
+  }],
+  "web_accessible_resources": [
+       "images/*"
+     ]
  
 }
