@@ -1,13 +1,18 @@
 function launchScript(){
-	chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
-		if (changeInfo.status === 'complete') {
-			chrome.tabs.executeScript(null, {file: 'hello.js'}, _=>chrome.runtime.lastError);
-		}
-	});
+	chrome.tabs.executeScript(null, {file: 'hello.js'}, _=>chrome.runtime.lastError);
 }
 
-//Check if the website is Carrefour
-chrome.tabs.query({url: "https://www.carrefour.fr/*"}, launchScript );
-
-
-
+chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
+	if (changeInfo.status === 'complete') {
+		chrome.tabs.getSelected(null,function(tab){
+			var tablink = tab.url;
+			if (tablink.includes("https://www.carrefour.fr/")){
+				launchScript();
+				//To modify product wich are loaded with JS on the website
+				if (!(tablink.includes("?noRedirect"))){
+					setTimeout(function(){launchScript()}, 1);
+				}
+			}
+		});
+	}
+});	
