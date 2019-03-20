@@ -1,5 +1,5 @@
 function launchScript(){
-	chrome.tabs.executeScript(null, {file: 'main.js'}, _=>chrome.runtime.lastError);
+	chrome.tabs.executeScript(null, {file: 'main.js'});//, _=>chrome.runtime.lastError);
 }
 
 chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {

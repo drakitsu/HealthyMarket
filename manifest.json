@@ -1,12 +1,12 @@
 {
   "manifest_version": 2,
  
-  "name": "",
-  "version": "0.1.0",
-  "description": "Lateral blog post demo extension",
+  "name": "[Beta] Achetez responsable",
+  "version": "0.2.0",
+  "description": "Obtenez des informations complémentaires sur les articles de vos drives préférés",
    "permissions": [
           "tabs",
-		  "*://*/*"
+		  "*://www.carrefour.fr/*"
           
         ],
         
@@ -20,6 +20,10 @@
  
   "web_accessible_resources": [
        "images/*"
-     ]
+     ],
+	 
+	"icons": { "16": "icon16.png",
+           "48": "icon48.png",
+          "128": "icon128.png" }
  
 }

@@ -1,4 +1,6 @@
 url = "https://fr.openfoodfacts.org/api/v0/produit/"
+requestFields = "?fields=nova_groups,nutrition_grades,additives_prev_original_tags,states_tags,ingredients_from_palm_oil_n,categories_tags,labels_tags"
+var regexCharcuterie = new RegExp(".*charcuteries.*");
 
 function makeHttpObject() {
 	try {return new XMLHttpRequest();}
@@ -26,10 +28,10 @@ function findArticle(barCode){
 	
 	//Error management
 	if (barCode==null){
-		return null,null;
+		return null;
 	}
 	
-	jsonUrl = url+barCode+".json";
+	jsonUrl = url+barCode+".json"+requestFields;
 	
 	
 	//Split the attribute of the JSON
@@ -37,10 +39,10 @@ function findArticle(barCode){
 	
 	//return null if product not found
 	if (obj.status == 0)
-		return null,null;
+		return null;
 	
 	//Get the attribute nova
-	if('nova_groups' in obj.product)// || obj.product.nova_groups=="undefined")
+	if('nova_groups' in obj.product)
 	{
 		nova=obj.product.nova_groups;	
 	}
@@ -56,8 +58,39 @@ function findArticle(barCode){
 	else
 		nutriscore="nullNutriscore";
 	
+	//Get the attribute nitrites
+	var nitrites = null;
+	//If the product contains a label "without nitrits" 
+	if (('labels_tags' in obj.product) && (obj.product.labels_tags.includes("fr:sans-nitrite"))){
+		nitrites="withoutNitrites";
+	}
+	//Else verify if categories and ingredients of the product are completed
+	else if (obj.product.states_tags.includes('en:categories-completed') && obj.product.states_tags.includes('en:ingredients-completed')){
+		//Verify if additives are compled and if contains e250
+		if  (('additives_prev_original_tags' in obj.product) && (obj.product.additives_prev_original_tags.includes('en:e250'))) {
+			nitrites="withNitrites";
+		}
+		//Verify if product is charcuterie and if additives are completed
+		else if ((regexCharcuterie.test(obj.product.categories_tags)) && ('additives_prev_original_tags' in obj.product)){
+			nitrites="withoutNitrites";
+		}
+	}
 
-	return [nutriscore, nova];
+	
+	//Get the attribute palm
+	var palm = null;
+	//If the product contains a label "palm-oil-free" 
+	if (('labels_tags' in obj.product) && (obj.product.labels_tags.includes("en:palm-oil-free"))){
+		palm= "withoutPalm";
+	}
+	//Else check the number of ingredients_from_palm_oil
+	else if ("ingredients_from_palm_oil_n" in obj.product){
+		if (obj.product.ingredients_from_palm_oil_n>0){
+			palm= "withPalm";
+		}
+	}
+
+	return [nutriscore, nova, nitrites, palm];
 
 }
 
@@ -99,17 +132,29 @@ function treatmentCarrefour()
 				continue;
 			}
 			
-			//Tag where nova and nutriscore will be insert
+			//Tag where pictures will be insert
 			var newNode=document.createElement("ul");
 			newNode.setAttribute("class", "product-badges-list tabNutriNova" );
 			
-			//Create the 2 pictures in HTML tag
+			//Create nova and nutriscore pictures in HTML tag
 			var nova=putPicture(newNode,resultat[0]);
 			var nutriscore =putPicture(newNode,resultat[1]);  
-			
-			newNode=parent[i].insertBefore(newNode, parent.lastChild);
+				
+			newNode=parent[i].insertBefore(newNode, null);
 			newNode.insertBefore(nutriscore, newNode.lastChild);
 			newNode.insertBefore(nova, newNode.lastChild);
+
+			//Verify and add nitrites and palm pictures if necessary
+			if (!(resultat[2]===null)){
+				var nitrites=putPicture(newNode,resultat[2]);
+				newNode.insertBefore(nitrites, newNode.lastChild);
+			}
+			if (!(resultat[3]===null)){
+				var palm=putPicture(newNode,resultat[3]);
+				newNode.insertBefore(palm, newNode.lastChild);
+			}
+				
+			
 			parent[i].setAttribute("class","product-card__badges modify")
 		}
 	}
