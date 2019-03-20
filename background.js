@@ -1,5 +1,5 @@
 function launchScript(){
-	chrome.tabs.executeScript(null, {file: 'hello.js'}, _=>chrome.runtime.lastError);
+	chrome.tabs.executeScript(null, {file: 'main.js'}, _=>chrome.runtime.lastError);
 }
 
 chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
@@ -10,7 +10,7 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
 				launchScript();
 				//To modify product wich are loaded with JS on the website
 				if (!(tablink.includes("?noRedirect"))){
-					setTimeout(function(){launchScript()}, 1);
+					setTimeout(function(){launchScript()}, 1000);
 				}
 			}
 		});

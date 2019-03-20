@@ -36,7 +36,7 @@ function findArticle(barCode){
 	obj = JSON.parse(requeteHTTP(jsonUrl));
 	
 	//return null if product not found
-	if (obj.status_verbose == "product not found")
+	if (obj.status == 0)
 		return null,null;
 	
 	//Get the attribute nova
