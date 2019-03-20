@@ -31,8 +31,13 @@ function findArticle(barCode){
 	
 	jsonUrl = url+barCode+".json";
 	
+	
 	//Split the attribute of the JSON
 	obj = JSON.parse(requeteHTTP(jsonUrl));
+	
+	//return null if product not found
+	if (obj.status_verbose == "product not found")
+		return null,null;
 	
 	//Get the attribute nova
 	if('nova_groups' in obj.product)// || obj.product.nova_groups=="undefined")
@@ -80,7 +85,6 @@ function treatmentCarrefour()
 			while (article.tagName!="ARTICLE") {
 				l=l+1;
 				article=article.parentNode;
-				//alert(l)
 			}
 			
 			//Get the ID of the product
@@ -89,6 +93,11 @@ function treatmentCarrefour()
 			
 			//Find the product on OpenFoodFacts
 			var resultat = findArticle(barCode);
+			
+			//Next iteration if product not found
+			if (resultat===null){
+				continue;
+			}
 			
 			//Tag where nova and nutriscore will be insert
 			var newNode=document.createElement("ul");
@@ -130,7 +139,7 @@ function putPicture(newNode , resultat)
 }
 
 function main(){
-		treatmentCarrefour();
+	treatmentCarrefour();
 
 }
 

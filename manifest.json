@@ -6,7 +6,8 @@
   "description": "Lateral blog post demo extension",
    "permissions": [
           "tabs",
-          "*://www.carrefour.fr/*"
+		  "*://*/*"
+          
         ],
         
    "background": {
@@ -15,11 +16,7 @@
  
   },
  
-  "content_scripts": [{
-    "_commentaire" : "'css': ['styles.css']",
-    "js": ["hello.js"],
-    "matches": ["http://*/*","https://*/*"]
-  }],
+ 
   "web_accessible_resources": [
        "images/*"
      ]
