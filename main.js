@@ -1,3 +1,4 @@
+var tabInformation = ["Nutri Score","Nova","Nitrites","Huile de palme"];
 
 function worker_function() {
 
@@ -123,10 +124,11 @@ postMessage({name:"result", data:string});
 
 
 
-function createDiv(typeDiv, classDiv)
+function createDiv(typeDiv, classDiv, textContent)
 {
 	var div = document.createElement(typeDiv);
-	div.setAttribute("class", classDiv); //"product-badge"
+	div.setAttribute("class", classDiv);
+	div.textContent=textContent;
 	return div;
 }
 
@@ -135,13 +137,35 @@ function insertIn(nodeParent, nodeToInsert)
 	nodeParent.insertBefore(nodeToInsert, null);
 }
 
-function insertInHtml(parent, dataTab, iteratorTab)
+function insertInHtml(parent, dataTab, iteratorTab,singleArticle)
 {
 	var li=createDiv("li","product-badge");
 	insertIn(parent, li);
-	var img=createImgDiv(li,dataTab[iteratorTab]);
+	if (singleArticle)
+		var img=createDiv("img","cssProduct");
+	else
+		var img=createDiv("img","cssProducts");
+	img.src = chrome.extension.getURL('images/'+dataTab[iteratorTab]+'.png');
+	var span=createDiv("span","product-badge-title",tabInformation[iteratorTab]);
 	insertIn(li,img);
+	insertIn(li,span);
 }
+
+function putPicture(newNode , resultat)
+{
+	/*
+		Create tag img for the differents pictures
+	*/
+	
+	var newContent = document.createElement('img');
+	
+	//Set attributes
+	newContent.src = chrome.extension.getURL('images/'+resultat+'.png');
+	newContent.style="height: 2rem !important;margin : 0 0.4rem !important;";
+	
+	return newNode.appendChild(newContent);  
+}
+
 
 function createImgDiv(newNode , result)
 {
@@ -239,10 +263,10 @@ function treatmentCarrefourProducts()
 		
 		//For each article to treat do...
 		var parent = document.getElementsByClassName("product-card__badges");
-		var startWrite=iList[0];
+		var startWrite=0;
 		
 		while (true){
-			var article=parent[startWrite]
+			var article=parent[startWrite+iList[0]];
 			while (article.tagName!="ARTICLE") {
 				article=article.parentNode;
 			}
@@ -267,29 +291,24 @@ function treatmentCarrefourProducts()
 			if (result[j]===null){
 				continue;
 			}
-			
-			//Tag where pictures will be insert
-			var newNode=document.createElement("ul");
-			newNode.setAttribute("class", "product-badges-list tabNutriNova" );
-			
-			//Create nova and nutriscore pictures in HTML tag
-			var nova=putPicture(newNode,result[j][0]);
-			var nutriscore =putPicture(newNode,result[j][1]);  
-				
-			newNode=parent[j+startWrite].insertBefore(newNode, null);
-			newNode.insertBefore(nutriscore, newNode.lastChild);
-			newNode.insertBefore(nova, newNode.lastChild);
 
-			//Verify and add nitrites and palm pictures if necessary
-			if (!(result[j][2]===null)){
-				var nitrites=putPicture(newNode,result[j][2]);
-				newNode.insertBefore(nitrites, newNode.lastChild);
-			}
-			if (!(result[j][3]===null)){
-				var palm=putPicture(newNode,result[j][3]);
-				newNode.insertBefore(palm, newNode.lastChild);
-			}
-			
+	//Tag where pictures will be insert
+	ulParent=createDiv("ul","product-badges-list tabNutriNova");
+
+			ulParent=parent[iList[j]+startWrite].insertBefore(ulParent, null);
+	for (var i=0; i<result[j].length;i++)
+	{
+		if ((i==2 || i==3) && result[j][i]!=null)
+		{
+			insertInHtml(ulParent,result[j],i);
+		}
+		else if ((i!=2 && i!=3))
+		{
+			insertInHtml(ulParent,result[j],i);
+		}
+	}
+
+		
 			parent[j+startWrite].setAttribute("barCode_debug",barCode[j]);
 				
 			
@@ -298,27 +317,8 @@ function treatmentCarrefourProducts()
 
 }
 
-function createUl()
-{
-		var newContent = document.createElement('ul');
-		newContent.setAttribute("class", "product-badges-list");
-		return newContent;
-}
 
-function putPicture(newNode , resultat)
-{
-	/*
-		Create tag img for the differents pictures
-	*/
-	
-	var newContent = document.createElement('img');
-	
-	//Set attributes
-	newContent.src = chrome.extension.getURL('images/'+resultat+'.png');
-	newContent.style="height: 2rem !important;margin : 0 0.4rem !important;";
-	
-	return newNode.appendChild(newContent);  
-}
+
 
 
 function treatmentCarrefourProduct()

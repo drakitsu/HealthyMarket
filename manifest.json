@@ -16,7 +16,12 @@
     "persistent": false
  
   },
-  
+  "content_scripts": [
+    {
+      "matches": ["*://www.carrefour.fr/*"],
+      "css": ["style.css"]
+    }
+  ],
  
  
   "web_accessible_resources": 
