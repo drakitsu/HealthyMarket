@@ -1,3 +1,6 @@
+
+function worker_function() {
+
 url = "https://fr.openfoodfacts.org/api/v0/produit/"
 requestFields = "?fields=nova_groups,nutrition_grades,additives_prev_original_tags,states_tags,ingredients_from_palm_oil_n,categories_tags,labels_tags"
 var regexCharcuterie = new RegExp(".*charcuteries.*");
@@ -12,7 +15,6 @@ function makeHttpObject() {
 
 	throw new Error("La création de l’objet pour les requêtes HTTP n’a pas pu avoir lieu.");
 }
-
 
 function requeteHTTP(URL){
 	var requete = makeHttpObject();
@@ -94,6 +96,31 @@ function findArticle(barCode){
 
 }
 
+self.onmessage = function(e) {
+    switch(e.data.name) {
+      case "barCode": 
+          var barCode= JSON.parse(e.data.data);
+			console.log("Liste reçue et décodée");
+		console.log(barCode);
+          break;
+      default:
+        console.error("Unknown message:", e.data.name);
+    }
+  
+
+var result=new Array();
+ 
+ 
+ 
+for (var i=0 ; i<barCode.length ; i++){
+			result[i] = findArticle(barCode[i]);
+}
+
+var string = JSON.stringify(result);
+postMessage({name:"result", data:string});
+
+}}
+
 function treatmentCarrefour()
 {
 	/*
@@ -103,12 +130,24 @@ function treatmentCarrefour()
 	
 		// Get the list of div of articles
 		var parent = document.getElementsByClassName("product-card__badges");
+		var firstClass;
+		
+		
+		var iList = new Array();
+		var barCode= new Array();
 		
 		//For each article do...
 		for (var i = 0; i<parent.length ; i++) {
 			
+			
+			
 			//If the value aren't modify do the treatement
-			if (parent[i].className!="product-card__badges modify") { 
+			if (parent[i].className!="product-card__badges readed" ){ //&& articles[i].className"product-card product-card--horizontal") { 
+			
+			parent[i].setAttribute("class","product-card__badges readed");
+			
+			iList.push(i);
+
 			
 			var article;
 			article=parent[i];
@@ -121,14 +160,67 @@ function treatmentCarrefour()
 			}
 			
 			//Get the ID of the product
-			barCode=article.id;
-	
+			barCode.push(article.id);
+			if (i==0){
+				firstClass=article.className;
+			}
 			
-			//Find the product on OpenFoodFacts
-			var resultat = findArticle(barCode);
+			}
+		}
+		
+		
+		var treatmentOffWorker  = new Worker(URL.createObjectURL(new Blob(["("+worker_function.toString()+")()"], {type: 'text/javascript'})));
+		
+		console.log("Liste avant envoi");
+		console.log(barCode);
+		var string = JSON.stringify(barCode);
+		treatmentOffWorker.postMessage({name:"barCode", data:string});
+		
+		
+
+		treatmentOffWorker.onmessage = function(e) {
+			switch(e.data.name) {
+			  case "result": 
+				  var result= JSON.parse(e.data.data);
+				  console.log("Liste resultat");
+		console.log(result);
+		console.log("listI");
+		console.log(iList);
+				  break;
+			  default:
+				console.error("Unknown message:", e.data.name);
+			}
+		
+		
+		
+		//For each article to treat do...
+		var parent = document.getElementsByClassName("product-card__badges");
+		var startWrite=0;
+		
+		while (true){
+			var article=parent[startWrite]
+			while (article.tagName!="ARTICLE") {
+				article=article.parentNode;
+			}
+			if ((article.id!=barCode[0]) || (firstClass!=article.className)){
+				//if (startWrite==0){
+					//setTimeout(function(){call(main.js);},1);
+				//}
+				startWrite++;
+			}
+			else {
+				break;
+			}
+		}
+		
+
+		
+		
+		for (var j=0; j<result.length; j++) {
+			
 			
 			//Next iteration if product not found
-			if (resultat===null){
+			if (result[j]===null){
 				continue;
 			}
 			
@@ -137,27 +229,28 @@ function treatmentCarrefour()
 			newNode.setAttribute("class", "product-badges-list tabNutriNova" );
 			
 			//Create nova and nutriscore pictures in HTML tag
-			var nova=putPicture(newNode,resultat[0]);
-			var nutriscore =putPicture(newNode,resultat[1]);  
+			var nova=putPicture(newNode,result[j][0]);
+			var nutriscore =putPicture(newNode,result[j][1]);  
 				
-			newNode=parent[i].insertBefore(newNode, null);
+			newNode=parent[iList[j]+startWrite].insertBefore(newNode, null);
 			newNode.insertBefore(nutriscore, newNode.lastChild);
 			newNode.insertBefore(nova, newNode.lastChild);
 
 			//Verify and add nitrites and palm pictures if necessary
-			if (!(resultat[2]===null)){
-				var nitrites=putPicture(newNode,resultat[2]);
+			if (!(result[j][2]===null)){
+				var nitrites=putPicture(newNode,result[j][2]);
 				newNode.insertBefore(nitrites, newNode.lastChild);
 			}
-			if (!(resultat[3]===null)){
-				var palm=putPicture(newNode,resultat[3]);
+			if (!(result[j][3]===null)){
+				var palm=putPicture(newNode,result[j][3]);
 				newNode.insertBefore(palm, newNode.lastChild);
 			}
+			
+			parent[iList[j]+startWrite].setAttribute("barCode_debug",barCode[j]);
 				
 			
-			parent[i].setAttribute("class","product-card__badges modify")
 		}
-	}
+		}
 
 }
 
@@ -184,6 +277,7 @@ function putPicture(newNode , resultat)
 }
 
 function main(){
+	debugger;
 	treatmentCarrefour();
 
 }

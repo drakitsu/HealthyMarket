@@ -2,7 +2,7 @@
   "manifest_version": 2,
  
   "name": "[Beta] Achetez responsable",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Obtenez des informations complémentaires sur les articles de vos drives préférés",
    "permissions": [
           "tabs",
@@ -18,9 +18,9 @@
   
  
  
-  "web_accessible_resources": [
-       "images/*"
-     ],
+  "web_accessible_resources": 
+       ["images/*", "offTreatment.js"]
+     ,
 	 
 	"icons": { "16": "icon16.png",
            "48": "icon48.png",
