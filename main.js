@@ -161,7 +161,7 @@ function treatmentCarrefour()
 			
 			//Get the ID of the product
 			barCode.push(article.id);
-			if (i==0){
+			if (barCode.length==1){
 				firstClass=article.className;
 			}
 			
@@ -195,7 +195,7 @@ function treatmentCarrefour()
 		
 		//For each article to treat do...
 		var parent = document.getElementsByClassName("product-card__badges");
-		var startWrite=0;
+		var startWrite=iList[0];
 		
 		while (true){
 			var article=parent[startWrite]
@@ -232,7 +232,7 @@ function treatmentCarrefour()
 			var nova=putPicture(newNode,result[j][0]);
 			var nutriscore =putPicture(newNode,result[j][1]);  
 				
-			newNode=parent[iList[j]+startWrite].insertBefore(newNode, null);
+			newNode=parent[j+startWrite].insertBefore(newNode, null);
 			newNode.insertBefore(nutriscore, newNode.lastChild);
 			newNode.insertBefore(nova, newNode.lastChild);
 
@@ -246,7 +246,7 @@ function treatmentCarrefour()
 				newNode.insertBefore(palm, newNode.lastChild);
 			}
 			
-			parent[iList[j]+startWrite].setAttribute("barCode_debug",barCode[j]);
+			parent[j+startWrite].setAttribute("barCode_debug",barCode[j]);
 				
 			
 		}
