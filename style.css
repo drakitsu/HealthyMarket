@@ -10,11 +10,3 @@
 	margin : 0 0.4rem !important;
 	
 	}
-
-.product-badge:hover .product-badge-title {
-    opacity: 1;
-}
-
-.product-card__badges .product-badge-title {
-    display: block !important;
-}

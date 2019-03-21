@@ -387,11 +387,11 @@ if (resultTab[0]!==null){
 	{
 		if ((i==2 || i==3) && result[i]!=null)
 		{
-			insertInHtml(ulParent[0],result,i);
+			insertInHtml(ulParent[0],result,i,true);
 		}
 		else if ((i!=2 && i!=3))
 		{
-			insertInHtml(ulParent[0],result,i);
+			insertInHtml(ulParent[0],result,i,true);
 		}
 	}
 }
