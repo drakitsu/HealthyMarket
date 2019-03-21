@@ -9,7 +9,7 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
 			if (tablink.includes("https://www.carrefour.fr/")){
 				launchScript();
 				//To modify product wich are loaded with JS on the website
-				if (!(tablink.includes("?noRedirect"))){
+				if (!tablink.includes("?noRedirect") && !tablink.includes("https://www.carrefour.fr/p/")){
 					setTimeout(function(){launchScript()}, 1000);
 				}
 			}

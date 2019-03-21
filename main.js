@@ -121,7 +121,45 @@ postMessage({name:"result", data:string});
 
 }}
 
-function treatmentCarrefour()
+
+
+function createDiv(typeDiv, classDiv)
+{
+	var div = document.createElement(typeDiv);
+	div.setAttribute("class", classDiv); //"product-badge"
+	return div;
+}
+
+function insertIn(nodeParent, nodeToInsert)
+{
+	nodeParent.insertBefore(nodeToInsert, null);
+}
+
+function insertInHtml(parent, dataTab, iteratorTab)
+{
+	var li=createDiv("li","product-badge");
+	insertIn(parent, li);
+	var img=createImgDiv(li,dataTab[iteratorTab]);
+	insertIn(li,img);
+}
+
+function createImgDiv(newNode , result)
+{
+/*
+Create tag img for the differents pictures
+*/
+
+var newContent = document.createElement('img');
+
+//Set attributes
+newContent.src = chrome.extension.getURL('images/'+result+'.png');
+newContent.style="height: 2.5rem !important;margin : 0 0.4rem !important;";
+
+return newNode.appendChild(newContent);  
+}
+
+
+function treatmentCarrefourProducts()
 {
 	/*
 		Treatement for brand Carrefour
@@ -168,6 +206,9 @@ function treatmentCarrefour()
 			}
 		}
 		
+		if (barCode.length==0){
+			return;
+		}
 		
 		var treatmentOffWorker  = new Worker(URL.createObjectURL(new Blob(["("+worker_function.toString()+")()"], {type: 'text/javascript'})));
 		
@@ -181,15 +222,18 @@ function treatmentCarrefour()
 		treatmentOffWorker.onmessage = function(e) {
 			switch(e.data.name) {
 			  case "result": 
-				  var result= JSON.parse(e.data.data);
-				  console.log("Liste resultat");
+			  console.log("Liste resultat");
 		console.log(result);
 		console.log("listI");
 		console.log(iList);
+				  var result= JSON.parse(e.data.data);
+				  
 				  break;
 			  default:
 				console.error("Unknown message:", e.data.name);
+				
 			}
+
 		
 		
 		
@@ -250,7 +294,7 @@ function treatmentCarrefour()
 				
 			
 		}
-		}
+		}	
 
 }
 
@@ -276,9 +320,61 @@ function putPicture(newNode , resultat)
 	return newNode.appendChild(newContent);  
 }
 
+
+function treatmentCarrefourProduct()
+{
+var idProduct = document.getElementsByClassName("webcollage")[0].getAttribute("data-ean");
+var barCode= new Array();
+barCode.push(idProduct);
+
+var treatmentOffWorker  = new Worker(URL.createObjectURL(new Blob(["("+worker_function.toString()+")()"], {type: 'text/javascript'})));
+		var string = JSON.stringify(barCode);
+		treatmentOffWorker.postMessage({name:"barCode", data:string});
+treatmentOffWorker.onmessage = function(e) {
+			switch(e.data.name) {
+			  case "result": 
+				  var resultTab= JSON.parse(e.data.data);
+				  
+				  break;
+			  default:
+				console.error("Unknown message:", e.data.name);
+				
+			}
+
+//If the product is found
+if (resultTab[0]!==null){
+	var result=resultTab[0];
+
+	//Get the ul parent div
+	var ulParent = document.getElementsByClassName("product-badges-list");
+
+	for (var i=0; i<result.length;i++)
+	{
+		if ((i==2 || i==3) && result[i]!=null)
+		{
+			insertInHtml(ulParent[0],result,i);
+		}
+		else if ((i!=2 && i!=3))
+		{
+			insertInHtml(ulParent[0],result,i);
+		}
+	}
+}
+
+}
+}
+
 function main(){
 	debugger;
-	treatmentCarrefour();
+	var url=document.URL;
+	if(url.includes("https://www.carrefour.fr/p/"))
+	{
+		treatmentCarrefourProduct();
+	}
+	else if (url.includes("https://www.carrefour.fr/"))
+	{
+		treatmentCarrefourProducts();
+	}
 
 }
 

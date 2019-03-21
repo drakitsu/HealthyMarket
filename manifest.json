@@ -6,7 +6,8 @@
   "description": "Obtenez des informations complémentaires sur les articles de vos drives préférés",
    "permissions": [
           "tabs",
-		  "*://www.carrefour.fr/*"
+		  "*://www.carrefour.fr/*",
+		  "*://www.carrefour.fr/*/*"
           
         ],
         
