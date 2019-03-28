@@ -8,7 +8,7 @@ var tabInformation = ["Nutri Score","Nova","Nitrites","Huile de palme"];
 			   \ \/  \/ / _ \| '__| |/ / _ \ '__|
 				\  /\  / (_) | |  |   <  __/ |   
 				 \/  \/ \___/|_|  |_|\_\___|_|   
-												  
+
 ----------------------------------------------------------------
 --------------------------------------------------------------*/
 function worker_function() {
@@ -39,22 +39,22 @@ function findArticle(barCode){
 	/*
 		Do a search on OpenFoodFacts to get the attribute of the product
 	*/
-	
+
 	//Error management
 	if (barCode==null){
 		return null;
 	}
-	
+
 	jsonUrl = url+barCode+".json"+requestFields;
-	
-	
+
+
 	//Split the attribute of the JSON
 	obj = JSON.parse(requeteHTTP(jsonUrl));
-	
+
 	//return null if product not found
 	if (obj.status == 0)
 		return null;
-	
+
 	//Get the attribute nova
 	if('nova_groups' in obj.product)
 	{
@@ -62,16 +62,16 @@ function findArticle(barCode){
 	}
 	else
 	{
-		
+
 			nova="nullNova";
 	}
-	
+
 	//Get the attribute nutriscore
 	if ('nutrition_grades' in obj.product)
 		nutriscore=obj.product.nutrition_grades;
 	else
 		nutriscore="nullNutriscore";
-	
+
 	//Get the attribute nitrites
 	var nitrites = null;
 	//If the product contains a label "without nitrits" 
@@ -90,7 +90,7 @@ function findArticle(barCode){
 		}
 	}
 
-	
+
 	//Get the attribute palm
 	var palm = null;
 	//If the product contains a label "palm-oil-free" 
@@ -118,12 +118,12 @@ self.onmessage = function(e) {
       default:
         console.error("Unknown message:", e.data.name);
     }
-  
+
 
 var result=new Array();
- 
- 
- 
+
+
+
 for (var i=0 ; i<barCode.length ; i++){
 			result[i] = findArticle(barCode[i]);
 }
@@ -141,8 +141,8 @@ postMessage({name:"result", data:string});
  | |  | |  | |    | | | |      | |    | |    | | |  __|  \___ \ 
  | |__| |  | |   _| |_| |____ _| |_   | |   _| |_| |____ ____) |
   \____/   |_|  |_____|______|_____|  |_|  |_____|______|_____/ 
-                                                                
-                                                                
+
+
 ----------------------------------------------------------------
 --------------------------------------------------------------*/
 
@@ -179,13 +179,13 @@ function putPicture(newNode , resultat)
 	/*
 		Create tag img for the differents pictures
 	*/
-	
+
 	var newContent = document.createElement('img');
-	
+
 	//Set attributes
 	newContent.src = chrome.extension.getURL('images/'+resultat+'.png');
 	newContent.style="height: 2rem !important;margin : 0 0.4rem !important;";
-	
+
 	return newNode.appendChild(newContent);  
 }
 
@@ -213,7 +213,7 @@ return newNode.appendChild(newContent);
  | |      / /\ \ |  _  /|  _  /|  __| |  __|| |  | | |  | |  _  / 
  | |____ / ____ \| | \ \| | \ \| |____| |   | |__| | |__| | | \ \ 
   \_____/_/    \_\_|  \_\_|  \_\______|_|    \____/ \____/|_|  \_\
-                                                                  
+
 ----------------------------------------------------------------
 --------------------------------------------------------------*/
 
@@ -223,60 +223,60 @@ function treatmentCarrefourProducts()
 	/*
 		Treatement for brand Carrefour
 	*/
-	
-	
+
+
 		// Get the list of div of articles
 		var parent = document.getElementsByClassName("product-card__badges");
 		var firstClass;
-		
-		
+
+
 		var iList = new Array();
 		var barCode= new Array();
-		
+
 		//For each article do...
 		for (var i = 0; i<parent.length ; i++) {
-			
-			
-			
+
+
+
 			//If the value aren't modify do the treatement
 			if (parent[i].className!="product-card__badges readed" ){ //&& articles[i].className"product-card product-card--horizontal") { 
-			
+
 			parent[i].setAttribute("class","product-card__badges readed");
-			
+
 			iList.push(i);
 
-			
+
 			var article;
 			article=parent[i];
-			
+
 			//Find the tag name of the parent div
 			var l=0;
 			while (article.tagName!="ARTICLE") {
 				l=l+1;
 				article=article.parentNode;
 			}
-			
+
 			//Get the ID of the product
 			barCode.push(article.id);
 			if (barCode.length==1){
 				firstClass=article.className;
 			}
-			
+
 			}
 		}
-		
+
 		if (barCode.length==0){
 			return;
 		}
-		
+
 		var treatmentOffWorker  = new Worker(URL.createObjectURL(new Blob(["("+worker_function.toString()+")()"], {type: 'text/javascript'})));
-		
+
 		console.log("Liste avant envoi");
 		console.log(barCode);
 		var string = JSON.stringify(barCode);
 		treatmentOffWorker.postMessage({name:"barCode", data:string});
-		
-		
+
+
 
 		treatmentOffWorker.onmessage = function(e) {
 			switch(e.data.name) {
@@ -286,20 +286,20 @@ function treatmentCarrefourProducts()
 		console.log("listI");
 		console.log(iList);
 				  var result= JSON.parse(e.data.data);
-				  
+
 				  break;
 			  default:
 				console.error("Unknown message:", e.data.name);
-				
+
 			}
 
-		
-		
-		
+
+
+
 		//For each article to treat do...
 		var parent = document.getElementsByClassName("product-card__badges");
 		var startWrite=0;
-		
+
 		while (true){
 			var article=parent[startWrite+iList[0]];
 			while (article.tagName!="ARTICLE") {
@@ -315,13 +315,13 @@ function treatmentCarrefourProducts()
 				break;
 			}
 		}
-		
 
-		
-		
+
+
+
 		for (var j=0; j<result.length; j++) {
-			
-			
+
+
 			//Next iteration if product not found
 			if (result[j]===null){
 				continue;
@@ -343,10 +343,10 @@ function treatmentCarrefourProducts()
 		}
 	}
 
-		
+
 			parent[j+startWrite].setAttribute("barCode_debug",barCode[j]);
-				
-			
+
+
 		}
 		}	
 
@@ -369,11 +369,11 @@ treatmentOffWorker.onmessage = function(e) {
 			switch(e.data.name) {
 			  case "result": 
 				  var resultTab= JSON.parse(e.data.data);
-				  
+
 				  break;
 			  default:
 				console.error("Unknown message:", e.data.name);
-				
+
 			}
 
 //If the product is found
@@ -407,8 +407,8 @@ if (resultTab[0]!==null){
 			 | |\/| | / /\ \   | | | . ` |
 			 | |  | |/ ____ \ _| |_| |\  |
 			 |_|  |_/_/    \_\_____|_| \_|
-										  
-										  
+
+
 ----------------------------------------------------------------
 --------------------------------------------------------------*/
 
@@ -426,7 +426,8 @@ function main(){
 	}
 
 }
+var test="ceci est un test";
+hello();
+//main();
 
-
-main();
-
+											&

@@ -1,35 +1,36 @@
 {
   "manifest_version": 2,
  
-  "name": "[Beta] Achetez responsable",
+  "name": "[Beta] Healthy Market",
   "version": "0.3.1",
   "description": "Obtenez des informations complémentaires sur les articles de vos drives préférés",
    "permissions": [
-          "tabs",
-		  "*://www.carrefour.fr/*",
-		  "*://www.carrefour.fr/*/*"
+          "tabs"
           
         ],
-        
-   "background": {
-    "scripts":["background.js"],
-    "persistent": false
  
-  },
-  "content_scripts": [
-    {
-      "matches": ["*://www.carrefour.fr/*"],
-      "css": ["style.css"]
-    }
-  ],
+    "content_scripts": [
+        {
+            "matches": ["https://*.carrefour.fr/*"],
+			"css": ["/css/style.css"],
+			"run_at": "document_end",
+            "js": [
+					"/js/brands/carrefour.js",
+                    "/js/external/jquery.js",
+					"/js/functions/worker.js",
+					"/js/functions/functional.js",
+					"/js/functions/main.js"
+                ]
+        }
+    ],
  
  
   "web_accessible_resources": 
-       ["images/*", "offTreatment.js"]
+       ["images/*"]
      ,
 	 
-	"icons": { "16": "icon16.png",
-           "48": "icon48.png",
-          "128": "icon128.png" }
+	"icons": { "16": "images/icons/icon16.png",
+           "48": "images/icons/icon48.png",
+          "128": "images/icons/icon128.png" }
  
 }

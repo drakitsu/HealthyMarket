@@ -1,3 +1,8 @@
+function hello()
+{
+	alert(test);
+}
+
 //alert(document.URL);
 url = "https://fr.openfoodfacts.org/api/v0/produit/";
 requestFields = "?fields=nova_groups,nutrition_grades,additives_prev_original_tags,states_tags,ingredients_from_palm_oil_n,categories_tags,labels_tags";

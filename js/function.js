@@ -52,7 +52,7 @@ newContent.style="height: 2.5rem !important;margin : 0 0.4rem !important;";
 return newNode.appendChild(newContent);  
 }
 
-function findArticle(barCode){
+function findArticleById(barCode){
 /*
 Do a search on OpenFoodFacts to get the attribute of the product
 */
