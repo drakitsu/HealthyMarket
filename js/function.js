@@ -5,18 +5,12 @@ function createDiv(typeDiv, classDiv)
 	return div;
 }
 
-function insertIn(nodeParent, nodeToInsert)
+/* function insertIn(nodeParent, nodeToInsert)
 {
 	nodeParent.insertBefore(nodeToInsert, null);
 }
+*/
 
-function insertInHtml(parent, dataTab, iteratorTab)
-{
-	var li=createDiv("li","product-badge");
-	insertIn(parent, li);
-	var img=createImgDiv(li,dataTab[iteratorTab]);
-	insertIn(li,img);
-}
 
 function makeHttpObject() {
 	try {return new XMLHttpRequest();}
@@ -37,19 +31,11 @@ function requeteHTTP(URL){
 	return requete.responseText;
 }
 
-function createImgDiv(newNode , result)
+function getImgLink(result)
 {
-/*
-Create tag img for the differents pictures
-*/
 
-var newContent = document.createElement('img');
-
-//Set attributes
-newContent.src = chrome.extension.getURL('images/'+result+'.png');
-newContent.style="height: 2.5rem !important;margin : 0 0.4rem !important;";
-
-return newNode.appendChild(newContent);  
+return chrome.extension.getURL('images/'+result+'.png');
+  
 }
 
 function findArticleById(barCode){

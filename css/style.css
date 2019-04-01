@@ -1,12 +1,20 @@
-.cssProducts {
+.carrefourPicturesProducts {
 	height: 2rem !important;
 	width: auto !important;
 	margin : 0 0.4rem !important;
 	}
 	
-.cssProduct {
+.carrefourPicturesProduct {
 	height: 2.5rem !important;
 	width: auto !important;
 	margin : 0 0.4rem !important;
 	
+	}
+	
+.product-badges-list{	
+	min-height: 2.45rem;
+	}
+
+.tabNutriNova{
+	min-height: 3.45rem;
 	}

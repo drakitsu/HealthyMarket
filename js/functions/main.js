@@ -1,4 +1,4 @@
-function main()
+function main(articles)
 {
 	//Domaine
 	domain = window.location.origin;
@@ -16,15 +16,19 @@ function main()
 		else
 		{
 			//alert("ok multiple");
-			multipleProductsCarrefour();
+			multipleProductsCarrefour(articles);
 		}
 	}
 
 }
 
-$(window).bind("load", function ()
-{
-	main();
+//$(window).bind("load", function ()
+//{
+	articles=$( ".product-grid" ).find("li.product-grid-item");
+	//Supprime le dernier article
+	articles.splice(-1,1)
+	console.log(articles);
+	main(articles);
 
 
 
@@ -32,12 +36,16 @@ $(window).bind("load", function ()
 
 	// The node to be monitored
 	var target = $(".product-grid")[0];
-
+	articles=[];
 	// Create an observer instance
 	var observer = new MutationObserver(function (mutations)
 		{
-			main();
-			console.log("mutation");
+			mutations.forEach( function( mutation ) {
+			articles.push(mutation.addedNodes[0]);
+				
+			});
+			console.log(articles);
+			main(articles);
 		}
 		);
 
@@ -64,5 +72,5 @@ $(window).bind("load", function ()
 	}
 	);*/
 
-}
-);
+//}
+//);
