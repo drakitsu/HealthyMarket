@@ -1,6 +1,43 @@
+function firstPageTreatmentCarrefour(){
+	articles=$( ".product-grid" ).find("li.product-grid-item");
+	//Supprime le dernier article
+	articles.splice(-1,1)
+	console.log(articles);
+	multipleProductsCarrefour(articles);
+}
+
+function observerCarrefour(){
+
+	// The node to be monitored
+	var target = $(".product-grid")[0];
+	articles=[];
+	// Create an observer instance
+	var observer = new MutationObserver(function (mutations)
+		{
+			mutations.forEach( function( mutation ) {
+			articles.push(mutation.addedNodes[0]);
+				
+			});
+			console.log(articles);
+			multipleProductsCarrefour(articles);
+		}
+		);
+
+	// Configuration of the observer:
+	var config =
+	{
+		attributes: true,
+		childList: true,
+		characterData: true
+	};
+
+	// Pass in the target node, as well as the observer options
+	observer.observe(target, config);
+}
+
 function createDivPictureCarrefour(tabNutriNova,result,tabInformation, singleProduct){
 	liImg=$(tabNutriNova).append('<li class="product-badge"></li>')[0].lastChild;
-	if (singleProduct=true)
+	if (singleProduct==true)
 		img=$(liImg).append('<img class="carrefourPicturesProduct">')[0].lastChild;
 	else
 		img=$(liImg).append('<img class="carrefourPicturesProducts">')[0].lastChild;
