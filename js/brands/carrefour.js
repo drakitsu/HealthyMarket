@@ -42,7 +42,8 @@ function createDivPictureCarrefour(tabNutriNova,result,tabInformation, singlePro
 	else
 		img=$(liImg).append('<img class="carrefourPicturesProducts">')[0].lastChild;
 	$(img).attr("src",chrome.extension.getURL('images/'+result)+'.png');
-	$(liImg).append('<span class="product-badge-title">'+tabInformation+'</span>');
+	//No title from the last update of carrefour drive
+	//$(liImg).append('<span class="product-badge-title">'+tabInformation+'</span>');
 }
 
 function multipleProductsCarrefour(items)
@@ -78,7 +79,10 @@ function multipleProductsCarrefour(items)
 			}
  */
 			//Get the ID of the product
-			idProductList.push(article.id);
+			if (article.id !== undefined && article.id !== null && article.id != "0")
+			{
+				idProductList.push(article.id);
+			}
 
 		}
 	}
@@ -108,10 +112,15 @@ function multipleProductsCarrefour(items)
 		{
 
 			article=items.find("article#"+idProductList[j])[0];
-			badge=$(article).find("div.product-card__badges")[0];
+			badge=$(article).find("ds-product-card--vertical-badges")[0];
+			
+			if (badge==undefined || badge==null) {
+				divprov=createDiv("div","ds-product-card--vertical-badges","");
+				badge=article.firstChild.appendChild(divprov);
+			}
 			
 			
-			$(badge).append( '<ul class="product-badges-list tabNutriNova"></ul>' );
+			$(badge).apppend( '<ul class="product-badges-list tabNutriNova"></ul>' );
 	
 			//Next iteration if product not found
 			if (result[j] === null)

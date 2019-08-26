@@ -11,10 +11,12 @@
 	
 	}
 	
-.product-badges-list{	
-	min-height: 2.45rem;
+.ds-product-card--vertical-badges{	
+	margin-top: 0rem !important;
 	}
 
 .tabNutriNova{
 	min-height: 2.45rem;
 	}
+	
+	

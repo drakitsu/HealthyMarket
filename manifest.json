@@ -2,7 +2,7 @@
   "manifest_version": 2,
  
   "name": "[Beta] Healthy Market",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "Obtenez des informations complémentaires sur les articles de vos drives préférés",
    "permissions": [
           "tabs"
